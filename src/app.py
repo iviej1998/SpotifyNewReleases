@@ -95,16 +95,11 @@ def main():
                         st.write(f"**Artists:** {artists}")
                         st.write(f"**Release Date:** {album.get('release_date', 'N/A')}")
                     
-                    with st.expander("Show Songs & Previews"):
+                    with st.expander("Show Songs"):
                         tracks = get_album_tracks(st.session_state.access_token, album["id"])
                         if tracks:
                             for index, track in enumerate(tracks, start=1):
                                 st.write(f"{index}. {track.get('name', 'Unknown Track')}")
-                                preview_url = track.get('preview_url')
-                                if preview_url:
-                                    st.audio(preview_url, format="audio/mp3")
-                                else:
-                                    st.write("_Preview not available for this track._")
                         else:
                             st.write("No tracks found for this album.")
                     st.markdown("---")
