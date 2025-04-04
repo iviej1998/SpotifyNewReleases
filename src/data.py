@@ -2,6 +2,7 @@ import urllib.parse
 import requests
 import base64
 import streamlit as st
+import time
 
 # Spotify Client Credentials
 CLIENT_ID = "8c19c2a6086d4f72bd03996391a93652"
@@ -76,6 +77,27 @@ def refresh_access_token(refresh_token: str) -> dict:
     else:
         st.error("Error refreshing access token: " + response.text)
         return None
+
+def refresh_if_needed():
+    """Automatically refresh the access token if it's nearly expired."""
+    if ("access_token" in st.session_state and
+        "expires_in" in st.session_state and
+        "token_timestamp" in st.session_state):
+        current_time = time.time()
+        elapsed = current_time - st.session_state.token_timestamp
+        # Refresh 60 seconds before expiration
+        if elapsed >= st.session_state.expires_in - 60:
+            st.write("Access token is expiring. Refreshing automatically...")
+            new_token_info = refresh_access_token(st.session_state.refresh_token)
+            if new_token_info:
+                st.session_state.access_token = new_token_info.get("access_token")
+                # Spotify may return a new expires_in value; update it
+                st.session_state.expires_in = new_token_info.get("expires_in", st.session_state.expires_in)
+                st.session_state.token_timestamp = time.time()
+                st.success("Access token refreshed automatically!")
+            else:
+                st.error("Failed to refresh access token.")
+
 
 if __name__ == "__main__":
     
