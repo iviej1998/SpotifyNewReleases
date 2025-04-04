@@ -6,7 +6,7 @@ import streamlit as st
 # Spotify Client Credentials
 CLIENT_ID = "8c19c2a6086d4f72bd03996391a93652"
 CLIENT_SECRET = "e77e7a0fa8694f79a99f05cddcd0633e"
-REDIRECT_URI = "https://spotify-new-releases.streamlit.app/" #redirect to streamlit app after spotify authentification
+REDIRECT_URI = "https://new-releases-spotify.streamlit.app/" #redirect to streamlit app after spotify authentification
 SCOPE = "user-top-read" #adjust scope
 
 def get_auth_url() -> str:
@@ -44,7 +44,7 @@ def exchange_code_for_token(code: str) -> dict:
         "code": code,
         "redirect_uri": REDIRECT_URI
     }
-    response = requests.post(token_url, headers=headers, data=data)
+    response = requests.post(token_url, headers=headers, data=data, timeout=3)
     if response.status_code == 200:
         return response.json()  # Contains access_token, refresh_token, expires_in, etc.
     else:
@@ -70,7 +70,7 @@ def refresh_access_token(refresh_token: str) -> dict:
         "grant_type": "refresh_token",
         "refresh_token": refresh_token,
     }
-    response = requests.post(token_url, headers=headers, data=data)
+    response = requests.post(token_url, headers=headers, data=data, timeout=3)
     if response.status_code == 200:
         return response.json()  # Contains the new access_token and expires_in, etc.
     else:
