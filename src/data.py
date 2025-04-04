@@ -51,7 +51,7 @@ def exchange_code_for_token(code: str) -> dict:
         "redirect_uri": REDIRECT_URI
     }
     response = requests.post(token_url, headers=headers, data=data, timeout=3)
-    if response.status_code == 200:
+    if response.status_code == 200: #successfull request
         return response.json()  # Contains access_token, refresh_token, expires_in, etc.
     else:
         st.error("Error exchanging code for token: " + response.text)
