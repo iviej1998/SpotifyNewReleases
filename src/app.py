@@ -54,6 +54,7 @@ def main():
             st.experimental_set_query_params()
         else:
             st.error("Token exchange failed.")
+            st.experimental_set_query_params()
 
     # If no access token is available, prompt the user to authorize.
     if st.session_state.access_token is None:
