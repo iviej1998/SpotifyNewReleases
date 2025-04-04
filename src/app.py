@@ -1,10 +1,17 @@
+""" 
+Streamlit front-end application
+Author: Jillian Ivie 
+"""
+
 import streamlit as st
 import requests
-import time
+import time #for managing token expiration
 from data import get_auth_url, exchange_code_for_token, refresh_access_token, refresh_if_needed
 
 @st.cache_data
-def get_new_releases(access_token):
+def get_new_releases(access_token: str) -> list[dict]:
+    """ This function gets the latest album releases """
+    
     url = "https://api.spotify.com/v1/browse/new-releases"
     headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.get(url, headers=headers, timeout=3)
@@ -16,7 +23,9 @@ def get_new_releases(access_token):
         return None
 
 @st.cache_data
-def get_album_tracks(access_token, album_id):
+def get_album_tracks(access_token: str, album_id: str) -> list:
+    """ This function fetches songs from a specific album by ID """
+    
     url = f"https://api.spotify.com/v1/albums/{album_id}/tracks"
     headers = {"Authorization": f"Bearer {access_token}"}
     response = requests.get(url, headers=headers, timeout=3)
@@ -29,7 +38,7 @@ def get_album_tracks(access_token, album_id):
 def main():
     st.title("Spotify New Releases")
 
-    # Initialize session state tokens and a flag to prevent reusing the auth code.
+    # initialize session state tokens and a flag to prevent reusing the authorization code
     if "access_token" not in st.session_state:
         st.session_state.access_token = None
     if "refresh_token" not in st.session_state:
@@ -37,10 +46,10 @@ def main():
     if "tokens_exchanged" not in st.session_state:
         st.session_state.tokens_exchanged = False
 
-    # Retrieve query parameters from the URL.
+    # retrieve query parameters from the URL
     query_params = st.query_params.to_dict()
 
-    # If we haven't exchanged a token yet and a 'code' is present, do the exchange.
+    # if token not exchanged yet and a 'code' is present, do the exchange
     if st.session_state.access_token is None and "code" in query_params and not st.session_state.tokens_exchanged:
         code = query_params["code"]
         st.write("Authorization code received. Exchanging for tokens...")
@@ -48,24 +57,23 @@ def main():
         if token_info:
             st.session_state.access_token = token_info.get("access_token")
             st.session_state.refresh_token = token_info.get("refresh_token")
-            st.session_state.tokens_exchanged = True  # Set flag so we don't exchange again
+            st.session_state.tokens_exchanged = True  # set flag so we don't exchange again
             st.success("Token exchange successful!")
-            st.query_params.clear()
-            # Clear the query parameters so the code won't be reused.
+            st.query_params.clear() # clear the query parameters so the code won't be reused
         else:
             st.error("Token exchange failed.")
 
-    # If no access token is available, prompt the user to authorize.
+    # if no access token is available, prompt the user to authorize
     if st.session_state.access_token is None:
         st.write("Click the link below to authorize Spotify:")
         auth_url = get_auth_url()
         st.markdown(f"[Authorize Spotify]({auth_url})", unsafe_allow_html=True)
-        st.stop()  # Stop further execution until we have tokens.
+        st.stop()  # stop further execution until tokens are attained
 
-    # Display the access token (for demo purposes only).
+    # display the access token
     st.write("Access Token:", st.session_state.access_token)
 
-    # Button to refresh the access token using the refresh token.
+    # button to refresh the access token manually
     if st.button("Refresh Access Token Manually"):
         new_token_info = refresh_access_token(st.session_state.refresh_token)
         if new_token_info:
@@ -76,10 +84,10 @@ def main():
         else:
             st.error("Failed to refresh access token.")
     
-    #automatically refresh the token if needed
+    # automatically refresh the token if needed
     refresh_if_needed()
 
-    # Button to fetch and display new releases.
+    # button to fetch and display new releases
     if st.button("Fetch New Releases"):
         albums = get_new_releases(st.session_state.access_token)
         if albums:
