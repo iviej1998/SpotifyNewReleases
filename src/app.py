@@ -98,6 +98,7 @@ def main():
                     with st.expander("Show Songs & Previews"):
                         tracks = get_album_tracks(st.session_state.access_token, album["id"])
                         if tracks:
+                            st.write(track)
                             for index, track in enumerate(tracks, start=1):
                                 st.write(f"{index}. {track.get('name', 'Unknown Track')}")
                                 preview_url = track.get('preview_url')
