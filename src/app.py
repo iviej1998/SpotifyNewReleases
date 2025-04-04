@@ -45,16 +45,15 @@ def main():
         code = query_params["code"][0]
         st.write("Authorization code received. Exchanging for tokens...")
         token_info = exchange_code_for_token(code)
+        st.experimental_set_query_params({})
         if token_info:
             st.session_state.access_token = token_info.get("access_token")
             st.session_state.refresh_token = token_info.get("refresh_token")
             st.session_state.tokens_exchanged = True  # Set flag so we don't exchange again
             st.success("Token exchange successful!")
             # Clear the query parameters so the code won't be reused.
-            st.experimental_set_query_params()
         else:
             st.error("Token exchange failed.")
-            st.experimental_set_query_params()
 
     # If no access token is available, prompt the user to authorize.
     if st.session_state.access_token is None:
