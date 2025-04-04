@@ -42,7 +42,7 @@ def main():
 
     # If we haven't exchanged a token yet and a 'code' is present, do the exchange.
     if st.session_state.access_token is None and "code" in query_params and not st.session_state.tokens_exchanged:
-        code = query_params["code"][0]
+        code = query_params["code"]
         st.write("Authorization code received. Exchanging for tokens...")
         token_info = exchange_code_for_token(code)
         if token_info:
