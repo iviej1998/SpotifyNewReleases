@@ -105,9 +105,9 @@ def main():
                                     st.audio(preview_url, format="audio/mp3")
                                 else:
                                     st.write("_Preview not available for this track._")
+                                    st.write(track)
                         else:
-                            #st.write("No tracks found for this album.")
-                            st.write(track)
+                            st.write("No tracks found for this album.")
                     st.markdown("---")
 
 if __name__ == '__main__':
