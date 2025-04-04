@@ -45,7 +45,7 @@ def main():
         code = query_params["code"][0]
         st.write("Authorization code received. Exchanging for tokens...")
         token_info = exchange_code_for_token(code)
-        st.experimental_set_query_params({})
+        st.experimental_set_query_params()
         if token_info:
             st.session_state.access_token = token_info.get("access_token")
             st.session_state.refresh_token = token_info.get("refresh_token")
