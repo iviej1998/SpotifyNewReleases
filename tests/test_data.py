@@ -2,11 +2,12 @@
 Test the data module
 Author: Jillian Ivie (iviej@my.erau.edu)
 """
+
 from unittest import TestCase # to create individual test cases
 from unittest import main # to run tests correctly
 from unittest.mock import patch # to temporarily replace real objects with mock objects during tests
 from unittest.mock import MagicMock # to create mock objects with customizable behaviors
-from src import data
+import data
 
 class TestSpotifyData(TestCase):
     """ This class inherits from TestCase """
