@@ -38,19 +38,19 @@ def main():
         st.session_state.tokens_exchanged = False
 
     # Retrieve query parameters from the URL.
-    query_params = st.query_params
+    query_params = st.query_params.to_dict()
 
     # If we haven't exchanged a token yet and a 'code' is present, do the exchange.
     if st.session_state.access_token is None and "code" in query_params and not st.session_state.tokens_exchanged:
         code = query_params["code"][0]
         st.write("Authorization code received. Exchanging for tokens...")
         token_info = exchange_code_for_token(code)
-        st.query_params.clear()
         if token_info:
             st.session_state.access_token = token_info.get("access_token")
             st.session_state.refresh_token = token_info.get("refresh_token")
             st.session_state.tokens_exchanged = True  # Set flag so we don't exchange again
             st.success("Token exchange successful!")
+            st.query_params.clear()
             # Clear the query parameters so the code won't be reused.
         else:
             st.error("Token exchange failed.")
