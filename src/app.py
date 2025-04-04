@@ -6,7 +6,7 @@ from data import get_auth_url, exchange_code_for_token, refresh_access_token
 def get_new_releases(access_token):
     url = "https://api.spotify.com/v1/browse/new-releases"
     headers = {"Authorization": f"Bearer {access_token}"}
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=3)
     if response.status_code == 200:
         data = response.json()
         return data["albums"]["items"]
@@ -18,7 +18,7 @@ def get_new_releases(access_token):
 def get_album_tracks(access_token, album_id):
     url = f"https://api.spotify.com/v1/albums/{album_id}/tracks"
     headers = {"Authorization": f"Bearer {access_token}"}
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, timeout=3)
     if response.status_code == 200:
         return response.json().get("items", [])
     else:
