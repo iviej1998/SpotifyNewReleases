@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
-from data import get_auth_url, exchange_code_for_token, refresh_access_token
+import time
+from data import get_auth_url, exchange_code_for_token, refresh_access_token, refresh_if_needed
 
 @st.cache_data
 def get_new_releases(access_token):
@@ -65,13 +66,18 @@ def main():
     st.write("Access Token:", st.session_state.access_token)
 
     # Button to refresh the access token using the refresh token.
-    if st.button("Refresh Access Token"):
+    if st.button("Refresh Access Token Manually"):
         new_token_info = refresh_access_token(st.session_state.refresh_token)
         if new_token_info:
             st.session_state.access_token = new_token_info.get("access_token")
-            st.success("Access token refreshed!")
+            st.session_state.expires_in = new_token_info.get("expires_in", st.session_state.expires_in)
+            st.session_state.token_timestamp = time.time()
+            st.success("Access token refreshed manually!")
         else:
             st.error("Failed to refresh access token.")
+    
+    #automatically refresh the token if needed
+    refresh_if_needed()
 
     # Button to fetch and display new releases.
     if st.button("Fetch New Releases"):
