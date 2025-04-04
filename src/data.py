@@ -1,3 +1,8 @@
+"""
+    Data Aquisition for Spotify Data
+    Author: Jillian Ivie
+"""
+
 import urllib.parse
 import requests
 import base64
@@ -85,13 +90,13 @@ def refresh_if_needed():
         "token_timestamp" in st.session_state):
         current_time = time.time()
         elapsed = current_time - st.session_state.token_timestamp
-        # Refresh 60 seconds before expiration
+        # refresh 60 seconds before expiration
         if elapsed >= st.session_state.expires_in - 60:
             st.write("Access token is expiring. Refreshing automatically...")
             new_token_info = refresh_access_token(st.session_state.refresh_token)
             if new_token_info:
                 st.session_state.access_token = new_token_info.get("access_token")
-                # Spotify may return a new expires_in value; update it
+                # spotify may return a new expires_in value; update it
                 st.session_state.expires_in = new_token_info.get("expires_in", st.session_state.expires_in)
                 st.session_state.token_timestamp = time.time()
                 st.success("Access token refreshed automatically!")
@@ -101,6 +106,6 @@ def refresh_if_needed():
 
 if __name__ == "__main__":
     
-    #for testing purposes, print the authorization URL
+    # for testing purposes, print the authorization URL
     print("Visit the following URL to authorize the app:")
     print(get_auth_url())
