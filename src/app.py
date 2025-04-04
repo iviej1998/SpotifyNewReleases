@@ -106,7 +106,7 @@ def main():
                                 else:
                                     st.write("_Preview not available for this track._")
                         else:
-                            st.write("No tracks found for this album.")
+                            #st.write("No tracks found for this album.")
                             st.write(track)
                     st.markdown("---")
 
