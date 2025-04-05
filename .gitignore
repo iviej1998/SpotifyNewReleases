@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# VS Code settings
+.vscode/
+.history/
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Streamlit and logs
+.streamlit/config.toml
+logs/
+
+# Docker
+*.log
+*.pid
+
+# Environment variables / secrets
+.env
+.env.*
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+
+# OS/system-specific
+Thumbs.db
+ehthumbs.db
