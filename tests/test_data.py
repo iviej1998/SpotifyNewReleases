@@ -109,13 +109,18 @@ class TestSpotifyData(TestCase):
         }
 
         
-        mock_st.session_state = {
+        session_state_data = {
             "access_token": "old_token",
             "expires_in": 3600,
             "token_timestamp": 0,
             "refresh_token": "valid_refresh_token"
         }
-            
+        
+        # Redirect get/set behavior of mock_st.session_state to this real dict
+        mock_st.session_state.__getitem__.side_effect = session_state_data.__getitem__
+        mock_st.session_state.__setitem__.side_effect = session_state_data.__setitem__
+        mock_st.session_state.__contains__.side_effect = session_state_data.__contains__
+        
         # call function
         data.refresh_if_needed()
 
