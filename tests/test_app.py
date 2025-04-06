@@ -62,6 +62,7 @@ class Test(TestCase):
         assert expected_message
         
         subheaders = [s.value for s in at.subheader]
+        print("Subheader values:", subheaders)
         assert any("Mock Album" in s for s in subheaders)
 
     @patch("src.app.refresh_access_token")
