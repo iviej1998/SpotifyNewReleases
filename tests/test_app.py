@@ -51,8 +51,10 @@ class Test(TestCase):
 
         at.run() #simulate streamlit's starup state based on current session state
         
-        assert "Fetch New Releases" in [b.label for b in at.button] #ensure button exists before clicking
-        at.button("Fetch New Releases").click().run() #simulate "Fetch New Releases" button
+        fetch_button = next((b for b in at.button if "Fetch New Releases" in b.label), None)
+        self.assertIsNotNone(fetch_button) #ensure button exists before clicking
+        fetch_button.click().run() #simulate clicking the "Fetch New Releases" and rerun the app
+
 
         assert "Found 1 albums!" in at.markdown[0].values
         assert "Mock Album" in at.subheader[0].values
@@ -70,15 +72,19 @@ class Test(TestCase):
         at = AppTest.from_file("src/app.py")
         
         #set session state to test manual refresh feature
-        at.session_state["access_token"] = "old_token"
-        at.session_state["refresh_token"] = "mock_refresh"
-        at.session_state["tokens_exchanged"] = True
-        at.session_state["expires_in"] = 3600
-        at.session_state["token_timestamp"] = 0
+        at.session_state.update({
+            "access_token": "mock_token",
+            "refresh_token": "mock_refresh",
+            "tokens_exchanged": True,
+            "expires_in": 3600,
+            "token_timestamp": 0
+        })
 
         at.run()
-        assert "Refresh Access Token Manually" in [b.label for b in at.button] #ensure button exists before clicking
-        at.button("Refresh Access Token Manually").click().run() #simulate clicking the "Refresh Access Token Manually" and rerun the app
+        
+        fetch_button = next((b for b in at.button if "Refresh Access Token Manually" in b.label), None)
+        self.assertIsNotNone(fetch_button) #ensure button exists before clicking
+        fetch_button.click().run() #simulate clicking the "Refresh Access Token Manually" and rerun the app
 
         #confirm the manual refresh logic updates the session state access token to the new mocked value
         assert at.session_state["access_token"] == "new_mock_token"

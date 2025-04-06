@@ -110,7 +110,7 @@ class TestSpotifyData(TestCase):
 
         
         #mock current time to simulate that the token is nearly expired
-        mock_time.return_value = 4600 #1 hour elapsed
+        mock_time.return_value = 4660 # token should refresh
         
         #simulate a successfull refresh token response
         mock_refresh_access_token.return_value = {
@@ -122,9 +122,9 @@ class TestSpotifyData(TestCase):
         data.refresh_if_needed()
         
         #verify session state updates correctly and user notified
-        self.assertEqual(mock_st.session_state["access_token"], "refreshed_access_token")
-        self.assertEqual(mock_st.session_state["expires_in"], 3600)
-        mock_st.success.assert_called_with("Access token refreshed automatically!")
+        assert session_state["access_token"] == "refreshed_access_token"
+        assert session_state["expires_in"] == 3600
+        mock_st.success.assert_called_once_with("Access token refreshed automatically!")
         
 # Run the test cases
 if __name__ == "__main__":
