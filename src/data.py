@@ -94,7 +94,7 @@ def refresh_if_needed():
         # refresh 60 seconds before expiration
         if elapsed >= st.session_state["expires_in"] - 60:
             st.write("Access token is expiring. Refreshing automatically...")
-            new_token_info = refresh_access_token(st.session_state.refresh_token)
+            new_token_info = refresh_access_token(st.session_state["refresh_token"])
             if new_token_info:
                 st.session_state.access_token = new_token_info.get("access_token")
                 # spotify may return a new expires_in value; update it

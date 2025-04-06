@@ -6,7 +6,7 @@ Author: Jillian Ivie
 import streamlit as st
 import requests
 import time #for managing token expiration
-from data import get_auth_url, exchange_code_for_token, refresh_access_token, refresh_if_needed
+import data
 
 @st.cache_data
 def get_new_releases(access_token: str) -> list[dict]:
@@ -67,7 +67,7 @@ def main():
     if st.session_state.access_token is None and "code" in query_params and not st.session_state.tokens_exchanged:
         code = query_params["code"]
         st.write("Authorization code received. Exchanging for tokens...")
-        token_info = exchange_code_for_token(code)
+        token_info = data.exchange_code_for_token(code)
         if token_info:
             st.session_state.access_token = token_info.get("access_token")
             st.session_state.refresh_token = token_info.get("refresh_token")
@@ -82,7 +82,7 @@ def main():
     # if no access token is available, prompt the user to authorize
     if st.session_state.access_token is None:
         st.write("Click the link below to authorize Spotify:")
-        auth_url = get_auth_url()
+        auth_url = data.get_auth_url()
         st.markdown(f"[Authorize Spotify]({auth_url})", unsafe_allow_html=True)
         st.stop()  # stop further execution until tokens are attained
 
@@ -91,7 +91,7 @@ def main():
 
     # button to refresh the access token manually
     if st.button("Refresh Access Token Manually"):
-        new_token_info = refresh_access_token(st.session_state.refresh_token)
+        new_token_info = data.refresh_access_token(st.session_state.refresh_token)
         if new_token_info:
             st.session_state.access_token = new_token_info.get("access_token")
             st.session_state.expires_in = new_token_info.get("expires_in", st.session_state.expires_in)
@@ -101,7 +101,7 @@ def main():
             st.error("Failed to refresh access token.")
     
     # automatically refresh the token if needed
-    refresh_if_needed()
+    data.refresh_if_needed()
     
     # debug session state
     st.write("Access Token", st.session_state.access_token)
