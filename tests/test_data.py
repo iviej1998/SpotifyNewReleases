@@ -125,8 +125,9 @@ class TestSpotifyData(TestCase):
         data.refresh_if_needed()
 
         # check state updated correctly
-        self.assertEqual(mock_st.session_state["access_token"], "refreshed_access_token")
-        self.assertEqual(mock_st.session_state["expires_in"], 3600)
+        self.assertEqual(session_state_data["access_token"], "refreshed_access_token")
+        self.assertEqual(session_state_data["expires_in"], 3600)
+        self.assertIn("token_timestamp", session_state_data)  
 # Run the test cases
 if __name__ == "__main__":
     main()
