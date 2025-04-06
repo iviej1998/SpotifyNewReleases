@@ -63,6 +63,7 @@ class Test(TestCase):
         subheaders = [s.value for s in at.subheader]
         assert any("Mock Album" in s for s in subheaders)
 
+    @patch("app.get_auth_url")
     @patch("app.refresh_access_token")
     def test_manual_refresh_button(self, mock_refresh_access_token: MagicMock, mock_get_auth_url: MagicMock) -> None:
         """ This functions tests if Refresh Access Token Manually button updates the access token"""
