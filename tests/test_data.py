@@ -8,7 +8,7 @@ from unittest import TestCase # to create individual test cases
 from unittest import main # to run tests correctly
 from unittest.mock import patch # to temporarily replace real objects with mock objects during tests
 from unittest.mock import MagicMock # to create mock objects with customizable behaviors
-import streamlit as st
+#import streamlit as st
 import data
 
 class TestSpotifyData(TestCase):
@@ -93,7 +93,7 @@ class TestSpotifyData(TestCase):
         self.assertIsNone(result)
 
     #decorators are applied bottom to top in execution
-    #@patch('data.st') # mock streamlit module import
+    @patch('data.st') # mock streamlit module import
     @patch('data.refresh_access_token') # mock function that refreshes token
     @patch('data.time.time') # mock current time
     def test_refresh_if_needed(self, mock_time: MagicMock, mock_refresh_access_token: MagicMock) -> None:

@@ -80,7 +80,7 @@ def refresh_access_token(refresh_token: str) -> dict:
     if response.status_code == 200:
         return response.json()  # Contains the new access_token and expires_in, etc.
     else:
-        return {"error": response.text}
+        return None
 
 def refresh_if_needed():
     """Automatically refresh the access token if it's nearly expired."""
@@ -90,7 +90,7 @@ def refresh_if_needed():
         current_time = time.time()
         elapsed = current_time - st.session_state["token_timestamp"]
         # refresh 60 seconds before expiration
-        if elapsed >= st.session_state.expires_in - 60:
+        if elapsed >= st.session_state["expires_in"] - 60:
             st.write("Access token is expiring. Refreshing automatically...")
             new_token_info = refresh_access_token(st.session_state.refresh_token)
             if new_token_info:

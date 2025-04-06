@@ -58,6 +58,7 @@ class Test(TestCase):
         fetch_button.click().run() #simulate clicking the "Fetch New Releases" and rerun the app
 
         found_texts = [m.value for m in at.markdown]
+        print("DEBUG: Markdown content:", found_texts)
         assert any("Found 1 albums!" in m for m in found_texts)
         subheaders = [s.value for s in at.subheader]
         assert any("Mock Album" in s for s in subheaders)
@@ -82,9 +83,7 @@ class Test(TestCase):
 
         at.run()
         
-        fetch_button = next((b for b in at.button if "Refresh Access Token Manually" in b.label), None)
-        self.assertIsNotNone(fetch_button) #ensure button exists before clicking
-        fetch_button.click().run() #simulate clicking the "Refresh Access Token Manually" and rerun the app
+        at.button("Refresh Access Token Manually").click().run()
 
         #confirm the manual refresh logic updates the session state access token to the new mocked value
         assert at.session_state["access_token"] == "new_mock_token"
