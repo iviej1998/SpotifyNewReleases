@@ -79,12 +79,12 @@ class Test(TestCase):
         at.session_state["token_timestamp"] = 0
         at.session_state["expires_in"] = 3600
         
-        at.run()
-        
         mock_refresh_access_token.return_value = {
         "access_token": "new_mock_token",
         "expires_in": 3600
         }
+        
+        at.run()
         
         at.button("Refresh Access Token Manually").click().run()
 

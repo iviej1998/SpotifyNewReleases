@@ -80,7 +80,7 @@ def main():
             st.error("Token exchange failed.")
 
     # if no access token is available, prompt the user to authorize
-    if st.session_state.access_token is None:
+    if st.session_state["access_token"] is None:
         st.write("Click the link below to authorize Spotify:")
         auth_url = data.get_auth_url()
         st.markdown(f"[Authorize Spotify]({auth_url})", unsafe_allow_html=True)
