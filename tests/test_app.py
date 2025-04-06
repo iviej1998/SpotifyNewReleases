@@ -14,6 +14,12 @@ class Test(TestCase):
         """ This function tests if the UI displays the correct title and does not raise exceptions """
         #use from_file class method of AppTest to load streamlit app from the specified file path
         at = AppTest.from_file("src/app.py")
+        
+        #simulate authentification success
+        at.session_state["access_token"] = "mock_token"
+        at.session_state["refresh_token"] = "mock_refresh"
+        at.session_state["tokens_exchanged"] = True
+        
         at.run() #execute streamlit app as a test
 
         #ensure the app is displaying the correct title
