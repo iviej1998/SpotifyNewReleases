@@ -22,8 +22,9 @@ class Test(TestCase):
         
         at.run() #execute streamlit app as a test
 
-        #ensure the app is displaying the correct title
-        assert at.title[0].values.startswith("Spotify New Releases")
+        #ensure the app is displaying the correct title 
+        #check if any of the title calls starts with..
+        assert any(title.startswith("Spotify New Releases") for title in at.title.values)
         #verify that no exceptions were raised during execution of the app
         assert not at.exception
         
@@ -49,6 +50,8 @@ class Test(TestCase):
         at.session_state["tokens_exchanged"] = True
 
         at.run() #simulate streamlit's starup state based on current session state
+        
+        assert "Fetch New Releases" in [b.label for b in at.button] #ensure button exists before clicking
         at.button("Fetch New Releases").click().run() #simulate "Fetch New Releases" button
 
         assert "Found 1 albums!" in at.markdown[0].values

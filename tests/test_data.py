@@ -32,7 +32,7 @@ class TestSpotifyData(TestCase):
         mock_response = MagicMock() #create a mock object
         mock_response.status_code = 200 # successful status code
         mock_response.json.return_value = { #mock the response from a spotify API call (POST request)
-            "access_token": "text_access_token",
+            "access_token": "test_access_token",
             "refresh_token": "test_refresh_token",
             "expires_in": 3600
         }
