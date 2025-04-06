@@ -45,6 +45,10 @@ def main():
         st.session_state.refresh_token = None
     if "tokens_exchanged" not in st.session_state:
         st.session_state.tokens_exchanged = False
+    if "expires_in" not in st.session_state:
+        st.session_state.expires_in = 3600
+    if "token_timestamp" not in st.session_state:
+        st.session_state.token_timestamp = time.time()
 
     # retrieve query parameters from the URL
     query_params = st.query_params.to_dict()
@@ -88,6 +92,12 @@ def main():
     
     # automatically refresh the token if needed
     refresh_if_needed()
+    
+    # debug session state
+    st.write("Access Token", st.session_state.access_token)
+    
+    #display the access token
+    st.write("Access Token:", st.session_state.access_token)
 
     # button to fetch and display new releases
     if st.button("Fetch New Releases"):
