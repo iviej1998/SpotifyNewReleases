@@ -77,6 +77,7 @@ class Test(TestCase):
         at.session_state["token_timestamp"] = 0
 
         at.run()
+        assert "Refresh Access Token Manually" in [b.label for b in at.button] #ensure button exists before clicking
         at.button("Refresh Access Token Manually").click().run() #simulate clicking the "Refresh Access Token Manually" and rerun the app
 
         #confirm the manual refresh logic updates the session state access token to the new mocked value

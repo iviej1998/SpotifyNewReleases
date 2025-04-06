@@ -8,6 +8,7 @@ from unittest import main # to run tests correctly
 from unittest.mock import patch # to temporarily replace real objects with mock objects during tests
 from unittest.mock import MagicMock # to create mock objects with customizable behaviors
 import data
+import urllib.parse #to convert REDIRECT_URI to URL encoded string
 
 class TestSpotifyData(TestCase):
     """ This class inherits from TestCase """
@@ -21,7 +22,7 @@ class TestSpotifyData(TestCase):
         self.assertIn("https://accounts.spotify.com/authorize", url)
         self.assertIn(f"client_id={data.CLIENT_ID}" , url)
         self.assertIn("response_type=code", url)
-        self.assertIn(f"redirect_uri={data.REDIRECT_URI}", url)
+        self.assertIn(f"redirect_uri={urllib.parse.quote(data.REDIRECT_URI)}", url)
         self.assertIn(f"scope={data.SCOPE}", url)
         
     @patch('data.requests.post') #decorator to mock the requests.post method used inside func
@@ -98,12 +99,12 @@ class TestSpotifyData(TestCase):
         """ This function tests the auto-refresh logic when the token is about to expire """
         
         #mock streamlit's session state with testt values simulating a nearly expired token
-        mock_st.session_state = {
-            "access_token": "old_access_token",
-            "expires_in": 3600,
-            "token_timestamp": 1000,
-            "refresh_token": "valid_refresh_token"
-        }
+        mock_st.session_state = MagicMock()
+        mock_st.session_state.access_token = "old_token"
+        mock_st.session_state.expires_in = 3600
+        mock_st.session_state.token_timestamp = 1000
+        mock_st.session_state.refresh_token = "valid_refresh_token"
+
         
         #mock current time to simulate that the token is nearly expired
         mock_time.return_value = 4600 #1 hour elapsed
