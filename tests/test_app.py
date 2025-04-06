@@ -28,7 +28,7 @@ class Test(TestCase):
         #verify that no exceptions were raised during execution of the app
         assert not at.exception
         
-    @patch("data.get_new_releases")
+    @patch("src.app.get_new_releases")
     def test_fetch_new_releases_button(self, mock_get_new_releases: MagicMock) -> None:
         """ This function tests if Fetch New Releases button works and displays mocked albums """
         
@@ -67,22 +67,25 @@ class Test(TestCase):
         print("Subheader values:", subheaders)
         assert any("Mock Album" in s for s in subheaders)
 
-    @patch("data.refresh_access_token")
+    @patch("src.app.refresh_access_token")
     def test_manual_refresh_button(self, mock_refresh_access_token):
         """Test if Refresh Access Token Manually button updates the access token"""
+
+        at = AppTest.from_file("src/app.py")
+        
+        at.session_state["access_token"] = "mock_token"
+        at.session_state["refresh_token"] = "mock_refresh"
+        at.session_state["tokens_exchanged"] = True
+        at.session_state["token_timestamp"] = 0
+        at.session_state["expires_in"] = 3600
+        
+        at.run()
+        
         mock_refresh_access_token.return_value = {
         "access_token": "new_mock_token",
         "expires_in": 3600
         }
-
-        at = AppTest.from_file("src/app.py")
-        at.session_state["access_token"] = "old_token"
-        at.session_state["refresh_token"] = "mock_refresh"
-        at.session_state["tokens_exchanged"] = True
-        at.session_state["expires_in"] = 3600
-        at.session_state["token_timestamp"] = 0
         
-        at.run()
         at.button("Refresh Access Token Manually").click().run()
 
         assert at.session_state["access_token"] == "new_mock_token"
