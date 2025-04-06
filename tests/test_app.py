@@ -2,10 +2,10 @@
 Test the app module
 Author: Jillian Ivie (iviej@my.erau.edu)
 """
+#import time
 from unittest import TestCase # for creating new test cases
 from unittest.mock import patch, MagicMock
 from streamlit.testing.v1 import AppTest # for testing of streamlit applications
-import time
 #create a class that inherits from TestCase
 class Test(TestCase):
     """ This class inherits from TestCase and will be recognized by Python's unittest framework as a collection of test methods """
