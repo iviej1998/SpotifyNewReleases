@@ -59,7 +59,7 @@ class Test(TestCase):
 
         found_texts = [m.value for m in at.markdown]
         print("DEBUG: Markdown content:", found_texts)
-        assert any("Found 1 albums!" in m for m in found_texts)
+        assert any("Found 2 albums!" in m for m in found_texts)
         subheaders = [s.value for s in at.subheader]
         assert any("Mock Album" in s for s in subheaders)
 
