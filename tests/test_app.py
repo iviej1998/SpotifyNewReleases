@@ -76,14 +76,12 @@ class Test(TestCase):
         }
 
         at = AppTest.from_file("src/app.py")
-        at.session_state.update({
-            "access_token": "old_token",
-            "refresh_token": "mock_refresh",
-            "tokens_exchanged": True,
-            "expires_in": 3600,
-            "token_timestamp": 0
-        })
-
+        at.session_state["access_token"] = "old_token"
+        at.session_state["refresh_token"] = "mock_refresh"
+        at.session_state["tokens_exchanged"] = True
+        at.session_state["expires_in"] = 3600
+        at.session_state["token_timestamp"] = 0
+        
         at.run()
         at.button("Refresh Access Token Manually").click().run()
 
