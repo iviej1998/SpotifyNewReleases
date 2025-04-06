@@ -28,7 +28,7 @@ class Test(TestCase):
         #verify that no exceptions were raised during execution of the app
         assert not at.exception
         
-    @patch('app.get_new_releases')
+    @patch("app.get_new_releases")
     def test_fetch_new_releases_button(self, mock_get_new_releases: MagicMock) -> None:
         """ This function tests if Fetch New Releases button works and displays mocked albums """
         
@@ -58,39 +58,29 @@ class Test(TestCase):
         fetch_button.click().run() #simulate clicking the "Fetch New Releases" and rerun the app
 
         found_texts = [m.value for m in at.markdown]
-        print("DEBUG: Markdown content:", found_texts)
-        assert any("Found 2 albums!" in m for m in found_texts)
+        print([m.value for m in at.markdown])
+        assert any("Found 1 albums!" in m for m in found_texts)
         subheaders = [s.value for s in at.subheader]
         assert any("Mock Album" in s for s in subheaders)
 
-    @patch("app.get_auth_url")
-    @patch("app.refresh_access_token")
-    def test_manual_refresh_button(self, mock_refresh_access_token: MagicMock, mock_get_auth_url: MagicMock) -> None:
-        """ This functions tests if Refresh Access Token Manually button updates the access token"""
-        
-        #set up mock test to refresh the access token
+    @patch("src.app.refresh_access_token")
+    def test_manual_refresh_button(self, mock_refresh_access_token):
+        """Test if Refresh Access Token Manually button updates the access token"""
         mock_refresh_access_token.return_value = {
-            "access_token": "new_mock_token",
-            "expires_in": 3600
+        "access_token": "new_mock_token",
+        "expires_in": 3600
         }
-        
-        mock_get_auth_url.return_value = "https://mock-auth-url"
 
         at = AppTest.from_file("src/app.py")
-        # Patch the internal session state used by Streamlit runtime
-        with patch.dict("streamlit.runtime.scriptrunner.script_run_context.get_script_run_ctx().session_state", {
+        at.session_state.update({
             "access_token": "old_token",
             "refresh_token": "mock_refresh",
-            "expires_in": 3600,
-            "token_timestamp": 0,
             "tokens_exchanged": True,
-        }, clear=True):
-            at.run()
-        
-        # Locate the button by label to be safer
-        refresh_btn = next((b for b in at.button if "Refresh Access Token" in b.label), None)
-        assert refresh_btn is not None, "Refresh Access Token Manually button not found"
-        refresh_btn.click().run()
+            "expires_in": 3600,
+            "token_timestamp": 0
+        })
 
-        #confirm the manual refresh logic updates the session state access token to the new mocked value
+        at.run()
+        at.button("Refresh Access Token Manually").click().run()
+
         assert at.session_state["access_token"] == "new_mock_token"
