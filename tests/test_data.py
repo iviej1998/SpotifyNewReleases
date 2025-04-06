@@ -103,12 +103,12 @@ class TestSpotifyData(TestCase):
         with patch.dict(st.session_state, {
             "access_token": "old_token",
             "expires_in": 3600,
-            "token_timestamp": 1000,
+            "token_timestamp": 0,
             "refresh_token": "valid_refresh_token"
         }, clear=True):
 
             #mock current time to simulate that the token is nearly expired
-            mock_time.return_value = 4660 # token should refresh
+            mock_time.return_value = 3700 # token should refresh
         
             #simulate a successfull refresh token response
             mock_refresh_access_token.return_value = {
