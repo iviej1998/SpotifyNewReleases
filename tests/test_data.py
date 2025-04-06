@@ -110,7 +110,7 @@ class TestSpotifyData(TestCase):
 
         
         # Use patch.dict to simulate session_state
-        with patch.dict(st.session_state, {
+        with patch.dict(mock_st.session_state, {
             "access_token": "old_token",
             "expires_in": 3600,
             "token_timestamp": 0,
@@ -121,8 +121,8 @@ class TestSpotifyData(TestCase):
             data.refresh_if_needed()
 
             # check state updated correctly
-            self.assertEqual(st.session_state["access_token"], "refreshed_access_token")
-            self.assertEqual(st.session_state["expires_in"], 3600)
+            self.assertEqual(mock_st.session_state["access_token"], "refreshed_access_token")
+            self.assertEqual(mock_st.session_state["expires_in"], 3600)
 # Run the test cases
 if __name__ == "__main__":
     main()
