@@ -99,6 +99,16 @@ class TestSpotifyData(TestCase):
     def test_refresh_if_needed(self, mock_refresh_access_token: MagicMock, mock_time: MagicMock, mock_st: MagicMock) -> None:
         """ This function tests the auto-refresh logic when the token is about to expire """
         
+        #mock current time to simulate that the token is nearly expired
+        mock_time.return_value = 3700 # token should refresh
+        
+        #simulate a successfull refresh token response
+        mock_refresh_access_token.return_value = {
+            "access_token": "refreshed_access_token",
+            "expires_in": 3600
+        }
+
+        
         # Use patch.dict to simulate session_state
         with patch.dict(st.session_state, {
             "access_token": "old_token",
@@ -106,16 +116,7 @@ class TestSpotifyData(TestCase):
             "token_timestamp": 0,
             "refresh_token": "valid_refresh_token"
         }, clear=True):
-
-            #mock current time to simulate that the token is nearly expired
-            mock_time.return_value = 3700 # token should refresh
-        
-            #simulate a successfull refresh token response
-            mock_refresh_access_token.return_value = {
-                "access_token": "refreshed_access_token",
-                "expires_in": 3600
-            }
-
+            
             # call function
             data.refresh_if_needed()
 
