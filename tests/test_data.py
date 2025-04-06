@@ -3,12 +3,12 @@ Test the data module
 Author: Jillian Ivie (iviej@my.erau.edu)
 """
 
+import urllib.parse #to convert REDIRECT_URI to URL encoded string
 from unittest import TestCase # to create individual test cases
 from unittest import main # to run tests correctly
 from unittest.mock import patch # to temporarily replace real objects with mock objects during tests
 from unittest.mock import MagicMock # to create mock objects with customizable behaviors
 import data
-import urllib.parse #to convert REDIRECT_URI to URL encoded string
 
 class TestSpotifyData(TestCase):
     """ This class inherits from TestCase """
@@ -92,9 +92,9 @@ class TestSpotifyData(TestCase):
         self.assertIsNone(result)
 
     #decorators are applied bottom to top in execution
-    @patch('data.refresh_access_token') # mock function that refreshes token
-    @patch('data.time.time') # mock current time
     @patch('data.st') # mock streamlit module import
+    @patch('data.time.time') # mock current time
+    @patch('data.refresh_access_token') # mock function that refreshes token
     def test_refresh_if_needed(self, mock_st: MagicMock, mock_time: MagicMock, mock_refresh_access_token: MagicMock) -> None:
         """ This function tests the auto-refresh logic when the token is about to expire """
         
