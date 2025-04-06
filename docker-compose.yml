@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spotify_streamlit_app
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./spotifynewreleases:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    restart: unless-stopped
