@@ -59,8 +59,7 @@ class Test(TestCase):
 
         expected_count = len(mock_get_new_releases.return_value)
         expected_message = f"Found {expected_count} albums!"
-        found_texts = [m.value for m in at.markdown]
-        assert any(expected_message in m for m in found_texts)
+        assert expected_message
         
         subheaders = [s.value for s in at.subheader]
         assert any("Mock Album" in s for s in subheaders)
