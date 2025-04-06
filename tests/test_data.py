@@ -8,7 +8,7 @@ from unittest import TestCase # to create individual test cases
 from unittest import main # to run tests correctly
 from unittest.mock import patch # to temporarily replace real objects with mock objects during tests
 from unittest.mock import MagicMock # to create mock objects with customizable behaviors
-import streamlit as st
+#import streamlit as st
 import data
 
 class TestSpotifyData(TestCase):
@@ -93,41 +93,39 @@ class TestSpotifyData(TestCase):
         self.assertIsNone(result)
 
     #decorators are applied bottom to top in execution
-    @patch("data.refresh_access_token") # mock function that refreshes token
-    @patch("data.time.time") # mock current time
-    @patch("data.st") # mock streamlit module import
-    def test_refresh_if_needed(self, mock_refresh_access_token: MagicMock, mock_time: MagicMock, mock_st: MagicMock) -> None:
-        """ This function tests the auto-refresh logic when the token is about to expire """
-        
-        #mock current time to simulate that the token is nearly expired
-        mock_time.return_value = 3700 # token should refresh
-        
-        #simulate a successfull refresh token response
-        mock_refresh_access_token.return_value = {
+    @patch("data.st", autospec=True)
+    @patch("data.time.time")
+    @patch("data.refresh_access_token")
+    def test_refresh_if_needed(self, mock_refresh, mock_time, mock_st):
+        """" test refresh if needed button """
+        # Setup mock time to simulate expiration
+        mock_time.return_value = 3700
+
+        # Setup refresh response
+        mock_refresh.return_value = {
             "access_token": "refreshed_access_token",
             "expires_in": 3600
         }
 
-        
-        session_state_data = {
+        # Use real dict to mimic session state
+        session = {
             "access_token": "old_token",
             "expires_in": 3600,
             "token_timestamp": 0,
             "refresh_token": "valid_refresh_token"
         }
-        
-        # Redirect get/set behavior of mock_st.session_state to this real dict
-        mock_st.session_state.__getitem__.side_effect = session_state_data.__getitem__
-        mock_st.session_state.__setitem__.side_effect = session_state_data.__setitem__
-        mock_st.session_state.__contains__.side_effect = session_state_data.__contains__
-        
-        # call function
+
+        # Assign dict to mock_st.session_state directly
+        mock_st.session_state = session
+
+        # Call function under test
         data.refresh_if_needed()
 
-        # check state updated correctly
-        self.assertEqual(session_state_data["access_token"], "refreshed_access_token")
-        self.assertEqual(session_state_data["expires_in"], 3600)
-        self.assertIn("token_timestamp", session_state_data)  
+        # Assert updates actually happened in the real dict
+        self.assertEqual(session["access_token"], "refreshed_access_token")
+        self.assertEqual(session["expires_in"], 3600)
+        self.assertTrue("token_timestamp" in session)
+
 # Run the test cases
 if __name__ == "__main__":
     main()
