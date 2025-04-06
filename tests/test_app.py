@@ -67,7 +67,7 @@ class Test(TestCase):
         print("Subheader values:", subheaders)
         assert any("Mock Album" in s for s in subheaders)
 
-    @patch("src.app.refresh_access_token")
+    @patch("data.refresh_access_token")
     def test_manual_refresh_button(self, mock_refresh_access_token):
         """Test if Refresh Access Token Manually button updates the access token"""
 
