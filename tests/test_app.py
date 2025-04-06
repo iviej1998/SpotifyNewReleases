@@ -27,9 +27,10 @@ class Test(TestCase):
         assert any(title.startswith("Spotify New Releases") for title in at.title.values)
         #verify that no exceptions were raised during execution of the app
         assert not at.exception
-        
+    
+    @patch("src.app.get_album_tracks")    
     @patch("src.app.get_new_releases")
-    def test_fetch_new_releases_button(self, mock_get_new_releases: MagicMock) -> None:
+    def test_fetch_new_releases_button(self, mock_get_new_releases: MagicMock, mock_get_album_tracks: MagicMock) -> None:
         """ This function tests if Fetch New Releases button works and displays mocked albums """
         
         #set up mock test to get the new releases from spotify
@@ -42,6 +43,11 @@ class Test(TestCase):
                 "id": "123"
             }
         ]
+        
+        mock_get_album_tracks.return_value = [
+            {"name": "Mock Song 1"},
+            {"name": "Mock Song 2"}
+        ]
         at = AppTest.from_file("src/app.py") #load the streamlit app fromthe specified file for testing
         
         #set session state to simulate authorized access
@@ -53,20 +59,18 @@ class Test(TestCase):
 
         at.run() #simulate streamlit's starup state based on current session state
         
-        at.session_state["test_mode"] = True
-        
+        # click "Fetch New Releases"
         fetch_button = next((b for b in at.button if "Fetch New Releases" in b.label), None)
-        self.assertIsNotNone(fetch_button) #ensure button exists before clicking
-        fetch_button.click().run() #simulate clicking the "Fetch New Releases" and rerun the app
+        self.assertIsNotNone(fetch_button, "Fetch New Releases button not found")
 
-        expected_count = len(mock_get_new_releases.return_value)
-        expected_message = f"Found {expected_count} albums!"
-        assert expected_message
-        
+        fetch_button.click().run()
+
+        # check the subheader shows the mock album name
         subheaders = [s.value for s in at.subheader]
-        print("Subheader values:", subheaders)
-        assert any("Mock Album" in s for s in subheaders)
+        print("Subheaders:", subheaders)
 
+        self.assertTrue(any("Mock Album" in s for s in subheaders), "Mock Album not found in subheaders")
+    
     @patch("data.refresh_access_token")
     def test_manual_refresh_button(self, mock_refresh_access_token):
         """Test if Refresh Access Token Manually button updates the access token"""
