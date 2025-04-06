@@ -57,6 +57,8 @@ def main():
         if token_info:
             st.session_state.access_token = token_info.get("access_token")
             st.session_state.refresh_token = token_info.get("refresh_token")
+            st.session_state.expires_in = token_info.get("expires_in", 3600)
+            st.session_state.token_timestamp = time.time()
             st.session_state.tokens_exchanged = True  # set flag so we don't exchange again
             st.success("Token exchange successful!")
             st.query_params.clear() # clear the query parameters so the code won't be reused

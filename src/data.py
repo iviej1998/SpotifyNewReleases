@@ -78,7 +78,9 @@ def refresh_access_token(refresh_token: str) -> dict:
     }
     response = requests.post(token_url, headers=headers, data=data, timeout=3)
     if response.status_code == 200:
-        return response.json()  # Contains the new access_token and expires_in, etc.
+        token_info = response.json()  # Contains the new access_token and expires_in, etc.
+        if "access_token" in token_info:
+            return token_info
     else:
         return None
 
