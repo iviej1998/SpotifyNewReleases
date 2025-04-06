@@ -64,7 +64,7 @@ class Test(TestCase):
         assert any("Mock Album" in s for s in subheaders)
 
     @patch("app.refresh_access_token")
-    def test_manual_refresh_button(self, mock_refresh_access_token):
+    def test_manual_refresh_button(self, mock_refresh_access_token: MagicMock, mock_get_auth_url: MagicMock) -> None:
         """ This functions tests if Refresh Access Token Manually button updates the access token"""
         
         #set up mock test to refresh the access token
@@ -72,6 +72,8 @@ class Test(TestCase):
             "access_token": "new_mock_token",
             "expires_in": 3600
         }
+        
+        mock_get_auth_url.return_value = "https://mock-auth-url"
 
         at = AppTest.from_file("src/app.py")
         #set session state to test manual refresh feature

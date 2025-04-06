@@ -93,9 +93,9 @@ class TestSpotifyData(TestCase):
         self.assertIsNone(result)
 
     #decorators are applied bottom to top in execution
-    @patch('data.st') # mock streamlit module import
     @patch('data.refresh_access_token') # mock function that refreshes token
     @patch('data.time.time') # mock current time
+    @patch('data.st') # mock streamlit module import
     def test_refresh_if_needed(self, mock_time: MagicMock, mock_refresh_access_token: MagicMock) -> None:
         """ This function tests the auto-refresh logic when the token is about to expire """
         
