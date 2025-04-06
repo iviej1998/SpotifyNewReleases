@@ -26,7 +26,7 @@ class TestSpotifyData(TestCase):
         self.assertIn(f"redirect_uri={urllib.parse.quote(data.REDIRECT_URI, safe='')}", url)
         self.assertIn(f"scope={data.SCOPE}", url)
         
-    @patch('data.requests.post') #decorator to mock the requests.post method used inside func
+    @patch("data.requests.post") #decorator to mock the requests.post method used inside func
     def test_exchange_code_for_token_success(self, mock_post: MagicMock) -> None:
         """ This function tests successful token exhange """
         
@@ -47,7 +47,7 @@ class TestSpotifyData(TestCase):
         self.assertEqual(result["access_token"], "test_access_token")
         self.assertEqual(result["refresh_token"], "test_refresh_token")
         
-    @patch('data.requests.post')
+    @patch("data.requests.post")
     def test_exchange_code_for_token_failure(self, mock_post: MagicMock) -> None:
         """ This function tests token exhange failure handling """
         
@@ -60,7 +60,7 @@ class TestSpotifyData(TestCase):
         #confirm function returns None upon failure
         self.assertIsNone(result)
         
-    @patch('data.requests.post')
+    @patch("data.requests.post")
     def test_refresh_access_token_success(self, mock_post: MagicMock) -> None:
         """ This function tests successfull token refresh """
         #mock spotify API request for refreshing access tokens
@@ -78,7 +78,7 @@ class TestSpotifyData(TestCase):
         self.assertIsNotNone(result)
         self.assertEqual(result["access_token"], "new_access_token")
         
-    @patch('data.requests.post')
+    @patch("data.requests.post")
     def test_refresh_access_token_failure(self, mock_post: MagicMock) -> None:
         """ This function token refresh failure handling """
         

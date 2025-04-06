@@ -28,7 +28,7 @@ class Test(TestCase):
         #verify that no exceptions were raised during execution of the app
         assert not at.exception
         
-    @patch("src.app.get_new_releases")
+    @patch("data.get_new_releases")
     def test_fetch_new_releases_button(self, mock_get_new_releases: MagicMock) -> None:
         """ This function tests if Fetch New Releases button works and displays mocked albums """
         
@@ -67,7 +67,7 @@ class Test(TestCase):
         print("Subheader values:", subheaders)
         assert any("Mock Album" in s for s in subheaders)
 
-    @patch("src.app.refresh_access_token")
+    @patch("data.refresh_access_token")
     def test_manual_refresh_button(self, mock_refresh_access_token):
         """Test if Refresh Access Token Manually button updates the access token"""
         mock_refresh_access_token.return_value = {
