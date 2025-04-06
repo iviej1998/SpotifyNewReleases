@@ -99,12 +99,14 @@ class TestSpotifyData(TestCase):
         """ This function tests the auto-refresh logic when the token is about to expire """
         
         #mock streamlit's session state with testt values simulating a nearly expired token
-        mock_st.session_state = {
+        session_state = {
             "access_token": "old_token",
             "expires_in": 3600,
             "token_timestamp": 1000,
             "refresh_token": "valid_refresh_token"
         }
+        
+        mock_st.session_state = session_state
 
         
         #mock current time to simulate that the token is nearly expired
