@@ -122,7 +122,7 @@ class TestSpotifyData(TestCase):
         data.refresh_if_needed()
         
         #verify session state updates correctly and user notified
-        assert session_state["access_token"] == "refreshed_access_token"
+        self.assertEqual(mock_st.session_state["access_token"], "refreshed_access_token")
         assert session_state["expires_in"] == 3600
         mock_st.success.assert_called_once_with("Access token refreshed automatically!")
         

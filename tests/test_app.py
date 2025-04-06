@@ -48,6 +48,8 @@ class Test(TestCase):
         at.session_state["access_token"] = "mock_token"
         at.session_state["refresh_token"] = "mock_refresh"
         at.session_state["tokens_exchanged"] = True
+        at.session_state["token_timestamp"] = 0
+        at.session_state["expires_in"] = 3600
 
         at.run() #simulate streamlit's starup state based on current session state
         
