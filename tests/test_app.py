@@ -5,7 +5,7 @@ Author: Jillian Ivie (iviej@my.erau.edu)
 from unittest import TestCase # for creating new test cases
 from unittest.mock import patch, MagicMock
 from streamlit.testing.v1 import AppTest # for testing of streamlit applications
-
+import time
 #create a class that inherits from TestCase
 class Test(TestCase):
     """ This class inherits from TestCase and will be recognized by Python's unittest framework as a collection of test methods """
@@ -82,7 +82,7 @@ class Test(TestCase):
         at.session_state["refresh_token"] = "mock_refresh"
         at.session_state["tokens_exchanged"] = True
         at.session_state["expires_in"] = 3600
-        at.session_state["token_timestamp"] = 0
+        at.session_state["token_timestamp"] = time.time()
 
         at.run()
         

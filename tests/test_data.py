@@ -109,15 +109,13 @@ class TestSpotifyData(TestCase):
         }
         
         #mock streamlit's session state with testt values simulating a nearly expired token
-        session_state = {
-            "access_token": "old_token",
-            "expires_in": 3600,
-            "token_timestamp": 1000,
-            "refresh_token": "valid_refresh_token"
-        }
-        
+        mock_st.session_state = MagicMock()
+        mock_st.session_state.access_token = "old_token"
+        mock_st.session_state.expires_in = 3600
+        mock_st.session_state.token_timestamp = 1000
+        mock_st.session_state.refresh_token = "valid_refresh_token"
         # patch st.session_state by temporarily replacing it with session_state dict
-        with patch("data.st.session_state", session_state), \
+        with patch("data.st.session_state", mock_st.session_state), \
             patch("data.st.success") as mock_success, \
             patch("data.st.error"):
 
@@ -125,8 +123,8 @@ class TestSpotifyData(TestCase):
             data.refresh_if_needed()
 
             # check state updated correctly
-            self.assertEqual(session_state["access_token"], "refreshed_access_token")
-            self.assertEqual(session_state["expires_in"], 3600)
+            self.assertEqual(mock_st.session_state.access_token, "refreshed_access_token")
+            self.assertEqual(mock_st.session_state.expires_in, 3600)
             mock_success.assert_called_with("Access token refreshed automatically!")
         
 # Run the test cases
