@@ -36,6 +36,16 @@ def get_album_tracks(access_token: str, album_id: str) -> list:
         return []
 
 def main():
+    
+    #add test mode to ensure streamlit won't sop early due to missing tokens when tests are running
+    if "test_mode" in st.session_state:
+        st.session_state.access_token = "mock_token"
+        st.session_state.refresh_token = "mock_refresh_token"
+        st.session_state.tokens_exchanged = True
+        st.session_state.expires_in = 3600
+        st.session_state.token_timestamp = time.time()
+    
+    
     st.title("Spotify New Releases")
 
     # initialize session state tokens and a flag to prevent reusing the authorization code

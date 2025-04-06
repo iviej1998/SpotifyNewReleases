@@ -28,7 +28,7 @@ class Test(TestCase):
         #verify that no exceptions were raised during execution of the app
         assert not at.exception
         
-    @patch("app.get_new_releases")
+    @patch("src.app.get_new_releases")
     def test_fetch_new_releases_button(self, mock_get_new_releases: MagicMock) -> None:
         """ This function tests if Fetch New Releases button works and displays mocked albums """
         
@@ -52,6 +52,8 @@ class Test(TestCase):
         at.session_state["expires_in"] = 3600
 
         at.run() #simulate streamlit's starup state based on current session state
+        
+        at.session_state["test_mode"] = True
         
         fetch_button = next((b for b in at.button if "Fetch New Releases" in b.label), None)
         self.assertIsNotNone(fetch_button) #ensure button exists before clicking
