@@ -85,7 +85,13 @@ class Test(TestCase):
         }
         
         at.run()
-        
-        at.button("Refresh Access Token Manually").click().run()
 
-        assert at.session_state["access_token"] == "new_mock_token"
+        # Find the refresh button safely
+        refresh_button = next((b for b in at.button if "Refresh Access Token Manually" in b.label), None)
+        self.assertIsNotNone(refresh_button, "Refresh Access Token Manually button not found")
+
+        # Simulate the button click and rerun the app
+        refresh_button.click().run()
+
+        # Assert that the token was updated
+        self.assertEqual(at.session_state["access_token"], "new_mock_token")
