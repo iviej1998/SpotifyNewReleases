@@ -96,7 +96,7 @@ class TestSpotifyData(TestCase):
     @patch('data.refresh_access_token') # mock function that refreshes token
     @patch('data.time.time') # mock current time
     @patch('data.st') # mock streamlit module import
-    def test_refresh_if_needed(self, mock_time: MagicMock, mock_refresh_access_token: MagicMock) -> None:
+    def test_refresh_if_needed(self, mock_refresh_access_token: MagicMock, mock_time: MagicMock, mock_st: MagicMock) -> None:
         """ This function tests the auto-refresh logic when the token is about to expire """
         
         # Use patch.dict to simulate session_state
