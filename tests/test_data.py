@@ -8,6 +8,7 @@ from unittest import TestCase # to create individual test cases
 from unittest import main # to run tests correctly
 from unittest.mock import patch # to temporarily replace real objects with mock objects during tests
 from unittest.mock import MagicMock # to create mock objects with customizable behaviors
+import streamlit as st
 import data
 
 class TestSpotifyData(TestCase):
@@ -92,22 +93,11 @@ class TestSpotifyData(TestCase):
         self.assertIsNone(result)
 
     #decorators are applied bottom to top in execution
-    @patch('data.st') # mock streamlit module import
-    @patch('data.time.time') # mock current time
+    #@patch('data.st') # mock streamlit module import
     @patch('data.refresh_access_token') # mock function that refreshes token
-    def test_refresh_if_needed(self, mock_st: MagicMock, mock_time: MagicMock, mock_refresh_access_token: MagicMock) -> None:
+    @patch('data.time.time') # mock current time
+    def test_refresh_if_needed(self, mock_time: MagicMock, mock_refresh_access_token: MagicMock) -> None:
         """ This function tests the auto-refresh logic when the token is about to expire """
-        
-        #mock streamlit's session state with testt values simulating a nearly expired token
-        session_state = {
-            "access_token": "old_token",
-            "expires_in": 3600,
-            "token_timestamp": 1000,
-            "refresh_token": "valid_refresh_token"
-        }
-        
-        mock_st.session_state = session_state
-
         
         #mock current time to simulate that the token is nearly expired
         mock_time.return_value = 4660 # token should refresh
@@ -118,13 +108,26 @@ class TestSpotifyData(TestCase):
             "expires_in": 3600
         }
         
-        #call original function to check & refresh the access token
-        data.refresh_if_needed()
+        #mock streamlit's session state with testt values simulating a nearly expired token
+        session_state = {
+            "access_token": "old_token",
+            "expires_in": 3600,
+            "token_timestamp": 1000,
+            "refresh_token": "valid_refresh_token"
+        }
         
-        #verify session state updates correctly and user notified
-        self.assertEqual(mock_st.session_state["access_token"], "refreshed_access_token")
-        assert session_state["expires_in"] == 3600
-        mock_st.success.assert_called_once_with("Access token refreshed automatically!")
+        # patch st.session_state by temporarily replacing it with session_state dict
+        with patch("data.st.session_state", session_state), \
+            patch("data.st.success") as mock_success, \
+            patch("data.st.error"):
+
+            # call function
+            data.refresh_if_needed()
+
+            # check state updated correctly
+            self.assertEqual(session_state["access_token"], "refreshed_access_token")
+            self.assertEqual(session_state["expires_in"], 3600)
+            mock_success.assert_called_with("Access token refreshed automatically!")
         
 # Run the test cases
 if __name__ == "__main__":

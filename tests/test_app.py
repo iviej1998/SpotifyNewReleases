@@ -57,9 +57,10 @@ class Test(TestCase):
         self.assertIsNotNone(fetch_button) #ensure button exists before clicking
         fetch_button.click().run() #simulate clicking the "Fetch New Releases" and rerun the app
 
-
-        assert any("Found 1 albums!" in m for m in at.markdown.values)
-        assert any("Mock Album" in s for s in at.subheader.values)
+        found_texts = [m.value for m in at.markdown]
+        assert any("Found 1 albums!" in m for m in found_texts)
+        subheaders = [s.value for s in at.subheader]
+        assert any("Mock Album" in s for s in subheaders)
 
     @patch("app.refresh_access_token")
     def test_manual_refresh_button(self, mock_refresh_access_token):
@@ -72,7 +73,6 @@ class Test(TestCase):
         }
 
         at = AppTest.from_file("src/app.py")
-        
         #set session state to test manual refresh feature
         at.session_state["access_token"] = "mock_token"
         at.session_state["refresh_token"] = "mock_refresh"
