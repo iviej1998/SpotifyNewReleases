@@ -77,16 +77,20 @@ class Test(TestCase):
         mock_get_auth_url.return_value = "https://mock-auth-url"
 
         at = AppTest.from_file("src/app.py")
-        #set session state to test manual refresh feature
-        at.session_state["access_token"] = "mock_token"
-        at.session_state["refresh_token"] = "mock_refresh"
-        at.session_state["tokens_exchanged"] = True
-        at.session_state["expires_in"] = 3600
-        at.session_state["token_timestamp"] = time.time()
-
-        at.run()
+        # Patch the internal session state used by Streamlit runtime
+        with patch.dict("streamlit.runtime.scriptrunner.script_run_context.get_script_run_ctx().session_state", {
+            "access_token": "old_token",
+            "refresh_token": "mock_refresh",
+            "expires_in": 3600,
+            "token_timestamp": 0,
+            "tokens_exchanged": True,
+        }, clear=True):
+            at.run()
         
-        at.button("Refresh Access Token Manually").click().run()
+        # Locate the button by label to be safer
+        refresh_btn = next((b for b in at.button if "Refresh Access Token" in b.label), None)
+        assert refresh_btn is not None, "Refresh Access Token Manually button not found"
+        refresh_btn.click().run()
 
         #confirm the manual refresh logic updates the session state access token to the new mocked value
         assert at.session_state["access_token"] == "new_mock_token"
