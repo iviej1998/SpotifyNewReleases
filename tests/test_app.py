@@ -48,6 +48,9 @@ class Test(TestCase):
             {"name": "Mock Song 1"},
             {"name": "Mock Song 2"}
         ]
+        
+        print("MOCK NEW RELEASES:", mock_get_new_releases.return_value)
+        
         at = AppTest.from_file("src/app.py") #load the streamlit app fromthe specified file for testing
         
         #set session state to simulate authorized access
@@ -61,10 +64,16 @@ class Test(TestCase):
         
         # click "Fetch New Releases"
         fetch_button = next((b for b in at.button if "Fetch New Releases" in b.label), None)
+        for b in at.button:
+            print("Button:", b.label)
+            
         self.assertIsNotNone(fetch_button, "Fetch New Releases button not found")
 
         fetch_button.click().run()
 
+        print("Subheaders:", [s.value for s in at.subheader])
+        print("Successes:", [s.value for s in at.success])
+        
         # check the subheader shows the mock album name
         subheaders = [s.value for s in at.subheader]
         print("Subheaders:", subheaders)
