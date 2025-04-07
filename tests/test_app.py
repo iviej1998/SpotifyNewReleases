@@ -32,7 +32,6 @@ class Test(TestCase):
     @patch("src.app.get_new_releases")
     def test_fetch_new_releases_button(self, mock_get_new_releases: MagicMock, mock_get_album_tracks: MagicMock) -> None:
         """ This function tests if Fetch New Releases button works and displays mocked albums """
-        import streamlit.runtime.caching
         
         #set up mock test to get the new releases from spotify
         mock_get_new_releases.return_value= [
@@ -60,8 +59,6 @@ class Test(TestCase):
         at.session_state["tokens_exchanged"] = True
         at.session_state["token_timestamp"] = 0
         at.session_state["expires_in"] = 3600
-
-        at.run() #simulate streamlit's starup state based on current session state
         
         # click "Fetch New Releases"
         fetch_button = next((b for b in at.button if "Fetch New Releases" in b.label), None)
@@ -70,7 +67,9 @@ class Test(TestCase):
             
         self.assertIsNotNone(fetch_button, "Fetch New Releases button not found")
 
-        fetch_button.click().run()
+        fetch_button.click()
+        
+        at.run() #simulate streamlit's starup state based on current session state
 
         print("Subheaders:", [s.value for s in at.subheader])
         print("Successes:", [s.value for s in at.success])
