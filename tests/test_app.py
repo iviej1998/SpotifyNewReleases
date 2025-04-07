@@ -3,8 +3,6 @@ Test the app module
 Author: Jillian Ivie (iviej@my.erau.edu)
 """
 #import time
-import os
-os.environ["ST_TEST_MODE"] = "1"
 from unittest import TestCase # for creating new test cases
 from unittest.mock import patch, MagicMock
 from streamlit.testing.v1 import AppTest # for testing of streamlit applications
@@ -32,26 +30,8 @@ class Test(TestCase):
     
     @patch("src.app.get_album_tracks")    
     @patch("src.app.get_new_releases")
-    def test_fetch_new_releases_button(self, mock_get_new_releases: MagicMock, mock_get_album_tracks: MagicMock) -> None:
+    def test_fetch_new_releases_button(self) -> None:
         """ This function tests if Fetch New Releases button works and displays mocked albums """
-        
-        #set up mock test to get the new releases from spotify
-        mock_get_new_releases.return_value= [
-            {
-                "name" : "Mock Album",
-                "artists" : [{"name": "Mock Artist"}],
-                "release_date": "2024-04-19",
-                "images": [{"url": "https://example.com/image.jpg"}],
-                "id": "123"
-            }
-        ]
-        
-        mock_get_album_tracks.return_value = [
-            {"name": "Mock Song 1"},
-            {"name": "Mock Song 2"}
-        ]
-        
-        print("MOCK NEW RELEASES:", mock_get_new_releases.return_value)
         
         at = AppTest.from_file("src/app.py") #load the streamlit app fromthe specified file for testing
         
@@ -61,6 +41,19 @@ class Test(TestCase):
         at.session_state["tokens_exchanged"] = True
         at.session_state["token_timestamp"] = 0
         at.session_state["expires_in"] = 3600
+        
+        # Inject mock functions
+        at.session_state["get_new_releases"] = lambda token: [{
+            "name": "Mock Album",
+            "artists": [{"name": "Mock Artist"}],
+            "release_date": "2024-04-19",
+            "images": [{"url": "https://example.com/image.jpg"}],
+            "id": "123"
+        }]
+        at.session_state["get_album_tracks"] = lambda token, album_id: [
+            {"name": "Mock Song 1"},
+            {"name": "Mock Song 2"}
+        ]
         
         at.run() #simulate streamlit's starup state based on current session state
         

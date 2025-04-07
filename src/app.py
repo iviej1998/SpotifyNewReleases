@@ -6,11 +6,6 @@ Author: Jillian Ivie
 import streamlit as st
 import requests
 import time #for managing token expiration
-import os
-# Disable cache during testing
-if os.getenv("ST_TEST_MODE") == "1":
-    st.cache_data = lambda func=None, **kwargs: (lambda x: x) if func is None else func
-
 import data
 
 @st.cache_data
@@ -116,7 +111,8 @@ def main():
 
     # button to fetch and display new releases
     if st.button("Fetch New Releases"):
-        albums = get_new_releases(st.session_state.access_token)
+        fetch_func = st.session_state.get("get_new_releases", get_new_releases)
+        albums = fetch_func(st.session_state.access_token)
         if albums:
             st.success(f"Found {len(albums)} albums!")
             for album in albums:
@@ -131,7 +127,8 @@ def main():
                         st.write(f"**Release Date:** {album.get('release_date', 'N/A')}")
                     
                     with st.expander("Show Songs"):
-                        tracks = get_album_tracks(st.session_state.access_token, album["id"])
+                        track_func = st.session_state.get("get_album_tracks", get_album_tracks)
+                        tracks = track_func(st.session_state.access_token, album["id"])
                         if tracks:
                             for index, track in enumerate(tracks, start=1):
                                 st.write(f"{index}. {track.get('name', 'Unknown Track')}")
