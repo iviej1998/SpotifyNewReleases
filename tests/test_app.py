@@ -2,10 +2,11 @@
 Test the app module
 Author: Jillian Ivie (iviej@my.erau.edu)
 """
-#import time
+
 from unittest import TestCase # for creating new test cases
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from streamlit.testing.v1 import AppTest # for testing of streamlit applications
+
 #create a class that inherits from TestCase
 class Test(TestCase):
     """ This class inherits from TestCase and will be recognized by Python's unittest framework as a collection of test methods """
@@ -41,6 +42,7 @@ class Test(TestCase):
         at.session_state["expires_in"] = 3600
         
         # Inject mock functions
+        # mock get_new_releases() func -> returns one test album
         at.session_state["get_new_releases"] = lambda token: [{
             "name": "Mock Album",
             "artists": [{"name": "Mock Artist"}],
@@ -48,6 +50,7 @@ class Test(TestCase):
             "images": [{"url": "https://example.com/image.jpg"}],
             "id": "123"
         }]
+        #mock get_album_tracks() -> returns 2 mock tracks from any album
         at.session_state["get_album_tracks"] = lambda token, album_id: [
             {"name": "Mock Song 1"},
             {"name": "Mock Song 2"}
@@ -57,35 +60,30 @@ class Test(TestCase):
         
         # click "Fetch New Releases"
         fetch_button = next((b for b in at.button if "Fetch New Releases" in b.label), None)
-        for b in at.button:
-            print("Button:", b.label)
-            
+        #verify the button is rendered    
         self.assertIsNotNone(fetch_button, "Fetch New Releases button not found")
-
-        fetch_button.click().run()
-        
-
-        print("Subheaders:", [s.value for s in at.subheader])
-        print("Successes:", [s.value for s in at.success])
-        
+        #simulate the user clicking the button and re-running the app
+        fetch_button.click().run()     
         # check the subheader shows the mock album name
         subheaders = [s.value for s in at.subheader]
         print("Subheaders:", subheaders)
-
+        #check if "Mock Album" in one of the subheaders
         self.assertTrue(any("Mock Album" in s for s in subheaders), "Mock Album not found in subheaders")
     
-    @patch("data.refresh_access_token")
+    @patch("data.refresh_access_token") #mock version of refresh_access_token() func
     def test_manual_refresh_button(self, mock_refresh_access_token):
         """Test if Refresh Access Token Manually button updates the access token"""
 
         at = AppTest.from_file("src/app.py")
         
+        #initialize session state for token refresh
         at.session_state["access_token"] = "mock_token"
         at.session_state["refresh_token"] = "mock_refresh"
         at.session_state["tokens_exchanged"] = True
         at.session_state["token_timestamp"] = 0
         at.session_state["expires_in"] = 3600
         
+        #return a mock response
         mock_refresh_access_token.return_value = {
         "access_token": "new_mock_token",
         "expires_in": 3600
