@@ -60,6 +60,8 @@ class Test(TestCase):
         at.session_state["token_timestamp"] = 0
         at.session_state["expires_in"] = 3600
         
+        at.run() #simulate streamlit's starup state based on current session state
+        
         # click "Fetch New Releases"
         fetch_button = next((b for b in at.button if "Fetch New Releases" in b.label), None)
         for b in at.button:
@@ -67,9 +69,8 @@ class Test(TestCase):
             
         self.assertIsNotNone(fetch_button, "Fetch New Releases button not found")
 
-        fetch_button.click()
+        fetch_button.click().run()
         
-        at.run() #simulate streamlit's starup state based on current session state
 
         print("Subheaders:", [s.value for s in at.subheader])
         print("Successes:", [s.value for s in at.success])
