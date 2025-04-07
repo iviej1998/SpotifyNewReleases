@@ -17,18 +17,19 @@ SCOPE = "user-top-read" #adjust scope
 
 def get_auth_url() -> str:
     """ 
-    Generate the Spotify authorization URL.
-    Direct the user to this URL to authorize the app.
+    This function generates the Spotify authorization URL
+    and directs the user to this URL to authorize the app
     """
     auth_url = "https://accounts.spotify.com/authorize"
     
+    # define a dictionary of query params to be included in the URL
     parameters = {
         "client_id": CLIENT_ID,
         "response_type": "code",
         "redirect_uri": REDIRECT_URI,
-        "scope": SCOPE
+        "scope": SCOPE 
     }
-    return f"{auth_url}?{urllib.parse.urlencode(parameters)}"
+    return f"{auth_url}?{urllib.parse.urlencode(parameters)}" # turn the parameters dictionary into a URL query string
 
 def exchange_code_for_token(code: str) -> dict:
     """ 
@@ -38,18 +39,21 @@ def exchange_code_for_token(code: str) -> dict:
         A dictionary containing access_token, refresh_token, expires_in..
         or None if there was an error
     """
-    token_url = "https://accounts.spotify.com/api/token"
-    auth_str = f"{CLIENT_ID}:{CLIENT_SECRET}"
-    b64_auth_str = base64.b64encode(auth_str.encode()).decode()
+    token_url = "https://accounts.spotify.com/api/token" #token exchange endpoint
+    auth_str = f"{CLIENT_ID}:{CLIENT_SECRET}" # for Basic Auth
+    b64_auth_str = base64.b64encode(auth_str.encode()).decode() #required by Spotify for HTTP Basic Auth
+    #set the request headers
     headers = {
         "Authorization": f"Basic {b64_auth_str}",
         "Content-Type": "application/x-www-form-urlencoded"
     }
+    #set the body of the POST request
     data = {
         "grant_type": "authorization_code",
         "code": code,
         "redirect_uri": REDIRECT_URI
     }
+    #send the POST request to Spotify's token URL with the headers and data
     response = requests.post(token_url, headers=headers, data=data, timeout=3)
     if response.status_code == 200: #successfull request
         return response.json()  # Contains access_token, refresh_token, expires_in, etc.
@@ -66,8 +70,9 @@ def refresh_access_token(refresh_token: str) -> dict:
         or None if there was an error.
     """
     token_url = "https://accounts.spotify.com/api/token"
-    auth_str = f"{CLIENT_ID}:{CLIENT_SECRET}"
-    b64_auth_str = base64.b64encode(auth_str.encode()).decode()
+    auth_str = f"{CLIENT_ID}:{CLIENT_SECRET}" 
+    b64_auth_str = base64.b64encode(auth_str.encode()).decode() 
+    # set the request headers
     headers = {
         "Authorization": f"Basic {b64_auth_str}",
         "Content-Type": "application/x-www-form-urlencoded"
