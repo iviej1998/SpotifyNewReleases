@@ -28,8 +28,6 @@ class Test(TestCase):
         #verify that no exceptions were raised during execution of the app
         assert not at.exception
     
-    @patch("src.app.get_album_tracks")    
-    @patch("src.app.get_new_releases")
     def test_fetch_new_releases_button(self) -> None:
         """ This function tests if Fetch New Releases button works and displays mocked albums """
         
