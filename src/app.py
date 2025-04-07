@@ -6,6 +6,11 @@ Author: Jillian Ivie
 import streamlit as st
 import requests
 import time #for managing token expiration
+import os
+# Disable cache during testing
+if os.getenv("ST_TEST_MODE") == "1":
+    st.cache_data = lambda func=None, **kwargs: (lambda x: x) if func is None else func
+
 import data
 
 @st.cache_data

@@ -3,6 +3,8 @@ Test the app module
 Author: Jillian Ivie (iviej@my.erau.edu)
 """
 #import time
+import os
+os.environ["ST_TEST_MODE"] = "1"
 from unittest import TestCase # for creating new test cases
 from unittest.mock import patch, MagicMock
 from streamlit.testing.v1 import AppTest # for testing of streamlit applications
