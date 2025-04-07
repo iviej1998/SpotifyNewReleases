@@ -8,7 +8,6 @@ from unittest import TestCase # to create individual test cases
 from unittest import main # to run tests correctly
 from unittest.mock import patch # to temporarily replace real objects with mock objects during tests
 from unittest.mock import MagicMock # to create mock objects with customizable behaviors
-#import streamlit as st
 import data
 
 class TestSpotifyData(TestCase):
@@ -96,7 +95,7 @@ class TestSpotifyData(TestCase):
     @patch("data.st", autospec=True)
     @patch("data.time.time")
     @patch("data.refresh_access_token")
-    def test_refresh_if_needed(self, mock_refresh, mock_time, mock_st):
+    def test_refresh_if_needed(self, mock_refresh: MagicMock, mock_time: MagicMock, mock_st: MagicMock) -> None:
         """" test refresh if needed button """
         # Setup mock time to simulate expiration
         mock_time.return_value = 3700
