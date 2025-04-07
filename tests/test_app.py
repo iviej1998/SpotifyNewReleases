@@ -33,7 +33,6 @@ class Test(TestCase):
     def test_fetch_new_releases_button(self, mock_get_new_releases: MagicMock, mock_get_album_tracks: MagicMock) -> None:
         """ This function tests if Fetch New Releases button works and displays mocked albums """
         import streamlit.runtime.caching
-        streamlit.runtime.caching.cache_data.disable() # type: ignore
         
         #set up mock test to get the new releases from spotify
         mock_get_new_releases.return_value= [
